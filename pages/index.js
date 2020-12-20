@@ -1,65 +1,66 @@
-import Head from 'next/head'
-import styles from '../styles/Home.module.css'
+import React, { useContext, useEffect } from "react"
+import "bulma/css/bulma.css"
+// import { useAuth0 } from "../contexts/auth0-context"
+import { useAuth0 } from "@auth0/auth0-react"
+function App() {
+  // const { isLoading, user, loginWithRedirect, logout } = useAuth0()
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    loginWithRedirect,
+    logout,
+    error,
+  } = useAuth0()
+  console.log("isAuthenticated :: ", isAuthenticated)
+  console.log("isLoading :: ", isLoading)
 
-export default function Home() {
+  // Custom facebook
+  // https://dev-0kis-gom.eu.auth0.com/authorize?response_type=code&client_id=iHewTdYXPMGgv24KYpUPq6Lrt51Yq6PE&connection=facebook&redirect_uri=http://localhost:3000/&state=STATE
+
   return (
-    <div className={styles.container}>
-      <Head>
-        <title>Create Next App</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
+    <>
+      <div className="hero is-info is-fullheight">
+        <div className="hero-body">
+          <div className="container has-text-centered">
+            {isLoading && <div>Loading ...</div>}
+            {!isLoading && !user && (
+              <>
+                <h1>Click Below!</h1>
+                <button
+                  onClick={loginWithRedirect}
+                  className="button is-danger"
+                >
+                  Login
+                </button>
+              </>
+            )}
+            {error && (
+              <>
+                <div>Oops... {error.message}</div>;
+              </>
+            )}
 
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
+            {!isLoading && user && (
+              <>
+                <h1>You are logged in!</h1>
+                <p>Hello {user.name}</p>
 
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code}>pages/index.js</code>
-        </p>
+                {user.picture && <img src={user.picture} alt="My Avatar" />}
+                <hr />
 
-        <div className={styles.grid}>
-          <a href="https://nextjs.org/docs" className={styles.card}>
-            <h3>Documentation &rarr;</h3>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a href="https://nextjs.org/learn" className={styles.card}>
-            <h3>Learn &rarr;</h3>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a
-            href="https://github.com/vercel/next.js/tree/master/examples"
-            className={styles.card}
-          >
-            <h3>Examples &rarr;</h3>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            href="https://vercel.com/import?filter=next.js&utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-            className={styles.card}
-          >
-            <h3>Deploy &rarr;</h3>
-            <p>
-              Instantly deploy your Next.js site to a public URL with Vercel.
-            </p>
-          </a>
+                <button
+                  onClick={() => logout({ returnTo: window.location.origin })}
+                  className="button is-small is-dark"
+                >
+                  Logout
+                </button>
+              </>
+            )}
+          </div>
         </div>
-      </main>
-
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <img src="/vercel.svg" alt="Vercel Logo" className={styles.logo} />
-        </a>
-      </footer>
-    </div>
+      </div>
+    </>
   )
 }
+export default App
